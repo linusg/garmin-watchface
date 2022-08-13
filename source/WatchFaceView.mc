@@ -1,10 +1,28 @@
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.Math;
+import Toybox.System;
 import Toybox.Time;
 import Toybox.Time.Gregorian;
 import Toybox.WatchUi;
 
+typedef DrawIconMethod as Method(
+    dc as Dc,
+    x as Number,
+    y as Number,
+    scale as Float,
+    options as Dictionary?
+) as Void;
+
+typedef Indicator as {
+    :text as String,
+    :drawIcon as DrawIconMethod?,
+    :drawIconOptions as Dictionary?,
+};
+
 class WatchFaceView extends WatchUi.WatchFace {
+
+    private var _drawBoundingBoxes as Boolean = false;
 
     function initialize() {
         WatchFace.initialize();
@@ -29,6 +47,95 @@ class WatchFaceView extends WatchUi.WatchFace {
         );
 
         View.onUpdate(dc);
+    }
+
+    function getScreenSizeAtOffsetY(offsetY as Number, height as Number) as {
+        :offsetX as Number, :widthAtOffsetY as Number
+    } {
+        var deviceSettings = System.getDeviceSettings();
+        if (offsetY + height > deviceSettings.screenHeight / 2) {
+            offsetY += height;
+        }
+        var widthAtOffsetY = 2 * Math.sqrt(
+            Math.pow(deviceSettings.screenWidth / 2, 2)
+            - Math.pow(deviceSettings.screenWidth / 2 - offsetY, 2)
+        );
+        var offsetX = (deviceSettings.screenWidth - widthAtOffsetY) / 2;
+        return {
+            :offsetX => offsetX.toNumber(),
+            :widthAtOffsetY => widthAtOffsetY.toNumber(),
+        };
+    }
+
+    function drawIndicators(
+        dc as Dc, indicators as Array<Indicator>, offsetY as Number, height as Number
+    ) as Void {
+        var screenSize = getScreenSizeAtOffsetY(offsetY, height);
+        var widthAtOffsetY = screenSize[:widthAtOffsetY] as Number;
+        var offsetX = screenSize[:offsetX] as Number;
+        for (var i = 0; i < indicators.size(); i++) {
+            var indicator = indicators[i];
+            var x = widthAtOffsetY / indicators.size() * i + offsetX;
+            var y = offsetY;
+            var width = widthAtOffsetY / indicators.size();
+            drawIndicator(dc, x, y, width, height, indicator);
+        }
+    }
+
+    function drawIndicator(
+        dc as Dc,
+        x as Number,
+        y as Number,
+        width as Number,
+        height as Number,
+        indicator as Indicator
+    ) as Void {
+        // Let's just say it's a square
+        var iconWidth = indicator[:drawIcon] != null ? height : 0;
+        var iconHeight = height;
+
+        var textDimensions = dc.getTextDimensions(
+            indicator[:text] as String,
+            Graphics.FONT_TINY
+        );
+        var textWidth = textDimensions[0];
+        var textHeight = textDimensions[1];
+
+        var offsetX = (width - (iconWidth + textWidth)) / 2;
+
+        var iconX = x + offsetX;
+        var iconY = y;
+
+        var textX = x + offsetX + iconWidth + (iconWidth ? 4 : 0);
+        var textY = y + (height - textHeight) / 2;
+
+        if (_drawBoundingBoxes) {
+            dc.setPenWidth(1);
+            dc.setColor(Graphics.COLOR_GREEN, Graphics.COLOR_TRANSPARENT);
+            dc.drawRectangle(x, y, width, height);
+            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+            dc.drawRectangle(iconX, iconY, iconWidth, iconHeight);
+            dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
+            dc.drawRectangle(textX, textY, textWidth, textHeight);
+        }
+
+        if (indicator[:drawIcon] != null) {
+            (indicator[:drawIcon] as DrawIconMethod).invoke(
+                dc,
+                iconX + iconWidth / 2,
+                iconY + iconHeight / 2,
+                0.45,
+                indicator[:drawIconOptions]
+            );
+        }
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            textX,
+            textY,
+            Graphics.FONT_TINY,
+            indicator[:text] as String,
+            Graphics.TEXT_JUSTIFY_LEFT
+        );
     }
 
 }
