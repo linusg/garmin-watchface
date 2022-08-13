@@ -94,6 +94,15 @@ class WatchFaceView extends WatchUi.WatchFace {
                 ]),
             });
         }
+        if (activityMonitorInfo.distance != null) {
+            bottomIndicators1.add({
+                :text => Lang.format("$1$ km", [
+                    (
+                        (activityMonitorInfo.distance as Number).toFloat() / 100000
+                    ).format("%.1f"),
+                ]),
+            });
+        }
         var indicatorHeight = 32;
         drawIndicators(dc, topIndicators, 40, indicatorHeight);
         drawIndicators(
