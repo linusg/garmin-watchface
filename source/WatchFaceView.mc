@@ -35,6 +35,7 @@ class WatchFaceView extends WatchUi.WatchFace {
     }
 
     function onUpdate(dc as Dc) as Void {
+        var deviceSettings = System.getDeviceSettings();
         var currentConditions = Weather.getCurrentConditions();
         var now = Time.Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
 
@@ -62,6 +63,14 @@ class WatchFaceView extends WatchUi.WatchFace {
                         (currentConditions as CurrentConditions).temperature as Number
                     ).format("%d"),
                 ]),
+            });
+        }
+        if (deviceSettings.notificationCount) {
+            topIndicators.add({
+                :text => deviceSettings.notificationCount.toString(),
+                :drawIcon => (
+                    new Lang.Method(Icons, :drawNotificationIcon) as DrawIconMethod
+                ),
             });
         }
 
