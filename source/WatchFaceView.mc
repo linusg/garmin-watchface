@@ -73,6 +73,12 @@ class WatchFaceView extends WatchUi.WatchFace {
                 ),
             });
         }
+        if (deviceSettings.alarmCount) {
+            topIndicators.add({
+                :text => deviceSettings.alarmCount.toString(),
+                :drawIcon => new Lang.Method(Icons, :drawAlarmIcon) as DrawIconMethod,
+            });
+        }
 
         var indicatorHeight = 32;
         drawIndicators(dc, topIndicators, 40, indicatorHeight);

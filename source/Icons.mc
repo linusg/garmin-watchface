@@ -3,6 +3,18 @@ import Toybox.Lang;
 
 module Icons {
 
+    function drawAlarmIcon(
+        dc as Dc, x as Number, y as Number, scale as Float, options as Null
+    ) as Void {
+        dc.setPenWidth(5 * scale);
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawCircle(x, y, 20 * scale);
+        dc.drawLine(x, y - 10 * scale, x, y);
+        dc.drawLine(x, y, x - 6 * scale, y + 8 * scale);
+        dc.drawLine(x + 17 * scale, y - 23 * scale, x + 23 * scale, y - 17 * scale);
+        dc.drawLine(x - 17 * scale, y - 23 * scale, x - 23 * scale, y - 17 * scale);
+    }
+
     // Monkey C compiler doesn't understand Array<Array<T>> for some reason?
     typedef ArrayOfNumeric as Array<Numeric>;
 
