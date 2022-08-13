@@ -15,6 +15,38 @@ module Icons {
         dc.drawLine(x - 17 * scale, y - 23 * scale, x - 23 * scale, y - 17 * scale);
     }
 
+    function drawBatteryIcon(
+        dc as Dc, x as Number, y as Number, scale as Float, options as {
+            :percentage as Number,
+            :isCharging as Boolean,
+        }
+    ) as Void {
+        var offset = 50 * (100 - options[:percentage] as Number) / 100;
+        dc.setPenWidth(4 * scale);
+        dc.setColor(
+            options[:percentage] as Number > 15
+                ? Graphics.COLOR_GREEN
+                : Graphics.COLOR_RED,
+            Graphics.COLOR_TRANSPARENT
+        );
+        dc.fillRoundedRectangle(
+            x - 15 * scale,
+            y - (20 - offset) * scale,
+            30 * scale,
+            (50 - offset) * scale,
+            2
+        );
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.fillRectangle(x - 8 * scale, y - 26 * scale, 16 * scale, 6 * scale);
+        dc.drawRoundedRectangle(
+            x - 15 * scale,
+            y - 20 * scale,
+            30 * scale,
+            50 * scale,
+            2
+        );
+    }
+
     // Monkey C compiler doesn't understand Array<Array<T>> for some reason?
     typedef ArrayOfNumeric as Array<Numeric>;
 

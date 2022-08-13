@@ -38,6 +38,7 @@ class WatchFaceView extends WatchUi.WatchFace {
     function onUpdate(dc as Dc) as Void {
         var activityMonitorInfo = ActivityMonitor.getInfo();
         var deviceSettings = System.getDeviceSettings();
+        var systemStats = System.getSystemStats();
         var currentConditions = Weather.getCurrentConditions();
         var now = Time.Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
 
@@ -55,6 +56,7 @@ class WatchFaceView extends WatchUi.WatchFace {
 
         var topIndicators = [] as Array<Indicator>;
         var bottomIndicators1 = [] as Array<Indicator>;
+        var bottomIndicators2 = [] as Array<Indicator>;
 
         if (
             currentConditions != null
@@ -103,12 +105,28 @@ class WatchFaceView extends WatchUi.WatchFace {
                 ]),
             });
         }
+
+        bottomIndicators2.add({
+            :text => Lang.format("$1$%", [systemStats.battery.format("%d")]),
+            :drawIcon => new Lang.Method(Icons, :drawBatteryIcon) as DrawIconMethod,
+            :drawIconOptions => {
+                :percentage => systemStats.battery,
+                :isCharging => systemStats.charging,
+            },
+        });
+
         var indicatorHeight = 32;
         drawIndicators(dc, topIndicators, 40, indicatorHeight);
         drawIndicators(
             dc,
             bottomIndicators1,
             deviceSettings.screenHeight - indicatorHeight * 2 - 70,
+            indicatorHeight
+        );
+        drawIndicators(
+            dc,
+            bottomIndicators2,
+            deviceSettings.screenHeight - indicatorHeight - 40,
             indicatorHeight
         );
     }
