@@ -83,11 +83,12 @@ module Icons {
     ) as Void {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
         dc.fillCircle(x - 15 * scale, y - 10 * scale, 16 * scale);
-        dc.fillCircle(x + 15 * scale, y - 10 * scale, 16 * scale);
+        // x is off by two to make the circles overlap with only 1px of space
+        // in between, aligning with the single pixel edge at the bottom.
+        dc.fillCircle(x + 13 * scale, y - 10 * scale, 16 * scale);
         dc.fillPolygon([
             [x - 28 * scale, y - 3 * scale] as Array<Numeric>,
-            // Off by one to adjust to rounding weirdness
-            [x + 29 * scale, y - 3 * scale] as Array<Numeric>,
+            [x + 28 * scale, y - 3 * scale] as Array<Numeric>,
             [x + 1 * scale, y + 25 * scale] as Array<Numeric>,
             [x - 1 * scale, y + 25 * scale] as Array<Numeric>,
         ] as Array<ArrayOfNumeric>);
