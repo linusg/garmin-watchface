@@ -1,5 +1,6 @@
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.System;
 
 module Icons {
 
@@ -45,6 +46,36 @@ module Icons {
             50 * scale,
             2
         );
+    }
+
+    function drawBluetoothIcon(
+        dc as Dc, x as Number, y as Number, scale as Float, options as {
+            :state as ConnectionState,
+        }
+    ) as Void {
+        var isConnected = options[:state] == System.CONNECTION_STATE_CONNECTED;
+        dc.setPenWidth(4 * scale);
+        dc.setColor(
+            isConnected
+                ? Graphics.COLOR_BLUE
+                : Graphics.COLOR_WHITE,
+            Graphics.COLOR_TRANSPARENT
+        );
+        dc.drawLine(x - 15 * scale, y - 15 * scale, x + 15 * scale, y + 15 * scale);
+        dc.drawLine(x - 15 * scale, y + 15 * scale, x + 15 * scale, y - 15 * scale);
+        dc.drawLine(x + 15 * scale, y + 15 * scale, x, y + 30 * scale);
+        dc.drawLine(x + 15 * scale, y - 15 * scale, x, y - 30 * scale);
+        dc.setPenWidth(5 * scale);
+        dc.drawLine(x - 1 * scale, y - 30 * scale, x - 1 * scale, y + 30 * scale);
+        if (!isConnected) {
+            dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+            dc.drawLine(
+                x - 30 * scale,
+                y - 10 * scale,
+                x + 30 * scale,
+                y + 10 * scale
+            );
+        }
     }
 
     function drawHeartIcon(

@@ -42,6 +42,9 @@ class WatchFaceView extends WatchUi.WatchFace {
         var deviceSettings = System.getDeviceSettings();
         var systemStats = System.getSystemStats();
         var currentConditions = Weather.getCurrentConditions();
+        var bluetoothState = (
+            deviceSettings.connectionInfo[:bluetooth] as ConnectionInfo
+        ).state;
         var now = Time.Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
 
         var dateLabel = View.findDrawableById("DateLabel") as Text;
@@ -114,6 +117,13 @@ class WatchFaceView extends WatchUi.WatchFace {
             :drawIconOptions => {
                 :percentage => systemStats.battery,
                 :isCharging => systemStats.charging,
+            },
+        });
+        bottomIndicators2.add({
+            :text => "",
+            :drawIcon => new Lang.Method(Icons, :drawBluetoothIcon) as DrawIconMethod,
+            :drawIconOptions => {
+                :state => bluetoothState
             },
         });
         bottomIndicators2.add({
