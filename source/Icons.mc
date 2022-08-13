@@ -47,6 +47,21 @@ module Icons {
         );
     }
 
+    function drawHeartIcon(
+        dc as Dc, x as Number, y as Number, scale as Float, options as Null
+    ) as Void {
+        dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(x - 15 * scale, y - 10 * scale, 16 * scale);
+        dc.fillCircle(x + 15 * scale, y - 10 * scale, 16 * scale);
+        dc.fillPolygon([
+            [x - 28 * scale, y - 3 * scale] as Array<Numeric>,
+            // Off by one to adjust to rounding weirdness
+            [x + 29 * scale, y - 3 * scale] as Array<Numeric>,
+            [x + 1 * scale, y + 25 * scale] as Array<Numeric>,
+            [x - 1 * scale, y + 25 * scale] as Array<Numeric>,
+        ] as Array<ArrayOfNumeric>);
+    }
+
     // Monkey C compiler doesn't understand Array<Array<T>> for some reason?
     typedef ArrayOfNumeric as Array<Numeric>;
 

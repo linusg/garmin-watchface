@@ -1,3 +1,4 @@
+import Toybox.Activity;
 import Toybox.ActivityMonitor;
 import Toybox.Graphics;
 import Toybox.Lang;
@@ -36,6 +37,7 @@ class WatchFaceView extends WatchUi.WatchFace {
     }
 
     function onUpdate(dc as Dc) as Void {
+        var activityInfo = Activity.getActivityInfo();
         var activityMonitorInfo = ActivityMonitor.getInfo();
         var deviceSettings = System.getDeviceSettings();
         var systemStats = System.getSystemStats();
@@ -113,6 +115,15 @@ class WatchFaceView extends WatchUi.WatchFace {
                 :percentage => systemStats.battery,
                 :isCharging => systemStats.charging,
             },
+        });
+        bottomIndicators2.add({
+            :text => (
+                activityInfo != null
+                && (activityInfo as Info).currentHeartRate != null
+            )
+                ? (activityInfo.currentHeartRate as Number).toString()
+                : "--",
+            :drawIcon => new Lang.Method(Icons, :drawHeartIcon) as DrawIconMethod,
         });
 
         var indicatorHeight = 32;
