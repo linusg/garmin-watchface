@@ -5,6 +5,7 @@ import Toybox.System;
 import Toybox.Time;
 import Toybox.Time.Gregorian;
 import Toybox.WatchUi;
+import Toybox.Weather;
 
 typedef DrawIconMethod as Method(
     dc as Dc,
@@ -34,6 +35,7 @@ class WatchFaceView extends WatchUi.WatchFace {
     }
 
     function onUpdate(dc as Dc) as Void {
+        var currentConditions = Weather.getCurrentConditions();
         var now = Time.Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
 
         var dateLabel = View.findDrawableById("DateLabel") as Text;
@@ -47,6 +49,24 @@ class WatchFaceView extends WatchUi.WatchFace {
         );
 
         View.onUpdate(dc);
+
+        var topIndicators = [] as Array<Indicator>;
+
+        if (
+            currentConditions != null
+            && (currentConditions as CurrentConditions).temperature != null
+        ) {
+            topIndicators.add({
+                :text => Lang.format("$1$ °C", [
+                    (
+                        (currentConditions as CurrentConditions).temperature as Number
+                    ).format("%d"),
+                ]),
+            });
+        }
+
+        var indicatorHeight = 32;
+        drawIndicators(dc, topIndicators, 40, indicatorHeight);
     }
 
     function getScreenSizeAtOffsetY(offsetY as Number, height as Number) as {
