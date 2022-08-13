@@ -1,3 +1,4 @@
+import Toybox.ActivityMonitor;
 import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.Math;
@@ -35,6 +36,7 @@ class WatchFaceView extends WatchUi.WatchFace {
     }
 
     function onUpdate(dc as Dc) as Void {
+        var activityMonitorInfo = ActivityMonitor.getInfo();
         var deviceSettings = System.getDeviceSettings();
         var currentConditions = Weather.getCurrentConditions();
         var now = Time.Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
@@ -52,6 +54,7 @@ class WatchFaceView extends WatchUi.WatchFace {
         View.onUpdate(dc);
 
         var topIndicators = [] as Array<Indicator>;
+        var bottomIndicators1 = [] as Array<Indicator>;
 
         if (
             currentConditions != null
@@ -80,8 +83,25 @@ class WatchFaceView extends WatchUi.WatchFace {
             });
         }
 
+        if (
+            activityMonitorInfo.steps != null
+            && activityMonitorInfo.stepGoal != null
+        ) {
+            bottomIndicators1.add({
+                :text => Lang.format("$1$/$2$", [
+                    (activityMonitorInfo.steps as Number).toString(),
+                    (activityMonitorInfo.stepGoal as Number).toString(),
+                ]),
+            });
+        }
         var indicatorHeight = 32;
         drawIndicators(dc, topIndicators, 40, indicatorHeight);
+        drawIndicators(
+            dc,
+            bottomIndicators1,
+            deviceSettings.screenHeight - indicatorHeight * 2 - 70,
+            indicatorHeight
+        );
     }
 
     function getScreenSizeAtOffsetY(offsetY as Number, height as Number) as {
